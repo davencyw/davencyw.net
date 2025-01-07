@@ -35,3 +35,9 @@ document.getElementById('close-extra-info').addEventListener('click', function()
   extraInfo.style.display = 'none';
   toggleButton.textContent = '[more]'; // Reset the toggle button to 'more'
 });
+
+document.addEventListener("mousemove", (event) => {
+  const cursor = document.querySelector(".custom-cursor");
+  cursor.style.left = `${event.clientX}px`;
+  cursor.style.top = `${event.clientY}px`;
+});
