@@ -6,46 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cutting Through the Noise: Automating AI Paper Review with Language Models</title>
     <link rel="stylesheet" href="https://latex.vercel.app/style.css">
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet"> -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
 
     <style>
-        /* Style for the dark mode button */
         #dark-mode-toggle {
             position: fixed;
-            /* Makes the button stay in the same place even on scroll */
             top: 30px;
-            /* Distance from the top of the screen */
             left: 30px;
-            /* Distance from the right side of the screen */
             padding: 10px 15px;
-            /* Adds some spacing inside the button */
             background-color: #e0e0e0;
-            /* Dark background color */
             color: #333;
-            /* White text color */
             border: none;
-            /* Removes the border */
             border-radius: 5px;
-            /* Rounds the button corners */
             cursor: pointer;
-            /* Changes the cursor to a pointer on hover */
             z-index: 1000;
-            /* Ensures it stays on top of other elements */
         }
 
         .banner {
             background-color: #fff8dc;
-            /* Light yellow */
             color: #000;
-            /* Black text for contrast */
             padding: 10px 20px;
             text-align: center;
             font-weight: bold;
             border-bottom: 2px solid #ffd700;
-            /* Gold border for emphasis */
+        }
+
+        .full-width-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            background-color: #fff8dc;
+            color: #000;
+            padding: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid #ffd700;
+            z-index: 1000;
+        }
+
+        body:has(.full-width-banner) header {
+            margin-top: 60px;
+        }
+
+        body:has(.full-width-banner) #dark-mode-toggle {
+            margin-top: 60px;
         }
     </style>
 </head>
@@ -53,7 +60,7 @@
 
 
 <body class="latex-light">
-    <div class="banner">
+    <div class="full-width-banner">
         This article is a <i>Work in Progress</i>. Content may be incomplete or subject to change.
     </div>
 
@@ -115,23 +122,55 @@
 
         <article class="indent-pars">
             <h2>Motivation</h2>
-            The flood of daily publications in Computer Vision and AI poses a challenge for anyone wanting to consume
-            research:
-            identifying valuable insights without spending hours sifting through papers. Traditional
-            keyword or author searches often miss nuanced context or fail to adapt to evolving interests and can miss
-            relevant papers.
-            <label for="sn-1" class="sidenote-toggle sidenote-number">Tools</label>
-            <input type="checkbox" id="sn-1" class="sidenote-toggle" />
-            <span class="sidenote">
-                See full list in Appendix A-II
-            </span>span>
-            such as litmap, semantics
-            scolar or connected papers fall short if it's about the most recent research.
-            I aimed to solve this by creating a system that not only automates the selection process
-            but also learns from user preferred topics. By combining AI-driven filtering with human feedback loops, this
-            tool empowers a user to focus on innovation rather than information overload.
+            <p>
+                The flood of daily publications in Computer Vision and AI poses a challenge for anyone wanting to
+                consume
+                research:
+                identifying valuable insights without spending hours sifting through papers. Traditional
+                keyword or author searches often miss nuanced context or fail to adapt to evolving interests and can
+                miss
+                relevant papers.
+                <label for="sn-1" class="sidenote-toggle sidenote-number">Tools</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    See full list in Appendix A-II
+                </span>
+                such as litmap, semantics
+                scolar or connected papers fall short if it's about the most recent research.
+                I aimed to solve this by creating a system that not only automates the selection process
+                but also learns from user preferred topics. By combining AI-driven filtering with human feedback loops,
+                this
+                tool empowers a user to focus on innovation rather than information overload.
             <h2>Approach</h2>
             <h3>Overview</h3>
+            The system consists of four main components (as seen in Fig. 1):
+            <ul>
+                <li>Paper Database</li>
+                <li>Paper Scraper</li>
+                <li>Learned Paper Curator</li>
+                <li>User Facing Application</li>
+            </ul>
+            In the following paragraph, each of those parts whill be
+            detailed followed by more detailed insights into
+            the sources, scoring and learning details.
+            </p>
+
+            <p><br><b>Paper Database</b><br>
+                Such that the whole process is independent from any external sources, I decided to have my own paper
+                database which stores the needed paper meta-information as well as a link to the pdf. This allows for
+                easy ingestion of new papers as well as checking if the same paper has already been ingested, if it
+                appears in multiple sources. Lastly, it allows for custom meta data which is important for tagging and
+                training.<br>
+                <br><b>Paper Scraper</b><br>
+                The paper scraper is responsible for finding and ingesting all new research publications from different
+                sources online. The scraper has been designed to be as flexible as possible allowing all possible
+                sources to be ingested. For now, only sources with a clean Python-API have been incorporated, namely
+                Arxiv and Google Scholar.<br>
+
+                <br><b>Learned Paper Curator</b><br><br>
+                <br><b>User Facing Application</b><br><br>
+            </p>
+
             <h3>Sources</h3>
             <h3>Scoring</h3>
             <h4>Model Finetuning</h4>
