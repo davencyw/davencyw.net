@@ -10,12 +10,76 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+    <style>
+        /* Style for the dark mode button */
+        #dark-mode-toggle {
+            position: fixed;
+            /* Makes the button stay in the same place even on scroll */
+            top: 30px;
+            /* Distance from the top of the screen */
+            left: 30px;
+            /* Distance from the right side of the screen */
+            padding: 10px 15px;
+            /* Adds some spacing inside the button */
+            background-color: #e0e0e0;
+            /* Dark background color */
+            color: #333;
+            /* White text color */
+            border: none;
+            /* Removes the border */
+            border-radius: 5px;
+            /* Rounds the button corners */
+            cursor: pointer;
+            /* Changes the cursor to a pointer on hover */
+            z-index: 1000;
+            /* Ensures it stays on top of other elements */
+        }
+
+        .banner {
+            background-color: #fff8dc;
+            /* Light yellow */
+            color: #000;
+            /* Black text for contrast */
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid #ffd700;
+            /* Gold border for emphasis */
+        }
+    </style>
 </head>
 
-<body class="latex-dark">
+
+
+<body class="latex-light">
+    <div class="banner">
+        This article is a <i>Work in Progress</i>. Content may be incomplete or subject to change.
+    </div>
+
+    <button id="dark-mode-toggle">Dark Mode</button>
+    <script>
+        const toggleButton = document.querySelector("#dark-mode-toggle");
+        toggleButton
+            .addEventListener('click', () => {
+                document.body.classList.toggle("latex-dark");
+                console.log(toggleButton.textContent);
+                if (toggleButton.textContent == "Light Mode") {
+                    toggleButton.textContent = "Dark Mode";
+                    toggleButton.style.backgroundColor = "#e0e0e0"; // Light background
+                    toggleButton.style.color = "#333"; // Dark text
+                } else {
+                    toggleButton.textContent = "Light Mode";
+                    toggleButton.style.backgroundColor = "#565656"; // Dark background
+                    toggleButton.style.color = "white"; // Light text
+                }
+            });
+    </script>
+
     <header>
         <h1>Cutting Through the Noise: Automated AI Paper Curation with Language Models</h1>
     </header>
+
 
     <p class="author">David Schmidig <br> January 2, 2025</p>
 
@@ -30,7 +94,13 @@
             with all the research that is happening.</span>
         and Artificial Intelligence makes staying
         updated a daunting task. To address this, I developed a tool that automates the discovery and filtering of
-        research papers from sources like Arxiv. This tool leverages fine-tuned language models, human feedback, and
+        research papers from sources like
+        <label for="sn-1" class="sidenote-toggle sidenote-number">Arxiv</label>
+        <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+        <span class="sidenote">
+            See full list of possible sources in Apendix A-I.
+        </span>
+        . This tool leverages fine-tuned language models, human feedback, and
         keyword relevance to streamline paper curation, ensuring that only the most relevant works reach the curious
         user. This article outlines the technical process behind building the tool, including data ingestion, model
         fine-tuning, and feedback integration, offering insights into how AI can simplify the research workflow.
@@ -64,6 +134,8 @@
             <h3>Overview</h3>
             <h3>Sources</h3>
             <h3>Scoring</h3>
+            <h4>Model Finetuning</h4>
+            <h4>Reinforcement Learning Updates</h4>
             <h3>Interface</h3>
             <h2>Results</h2>
             <h2>Limitations</h2>
