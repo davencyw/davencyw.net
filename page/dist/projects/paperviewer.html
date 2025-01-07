@@ -21,8 +21,8 @@
 
     <div class="abstract">
         <h2>Abstract</h2>
-        The rapid growth of research publications in Computer Vision
-        <label for="sn-1" class="sidenote-toggle sidenote-number"></label>
+        The rapid growth of research publications in Computer
+        <label for="sn-1" class="sidenote-toggle sidenote-number">Vision</label>
         <input type="checkbox" id="sn-1" class="sidenote-toggle" />
         <span class="sidenote">In 2024, there were more than 20'000 submitted papers to ECCV and CVPR only. Slightly
             over
@@ -35,16 +35,29 @@
         user. This article outlines the technical process behind building the tool, including data ingestion, model
         fine-tuning, and feedback integration, offering insights into how AI can simplify the research workflow.
     </div>
+    <figure>
+        <img src="/davencyw.net/projects/paperviewer/overview.png">
+        <figcaption>Overview of the whole system</figcaption>
+    </figure>
 
 
     <main>
 
         <article class="indent-pars">
             <h2>Motivation</h2>
-            The deluge of daily publications in Computer Vision and AI poses a challenge for researchers and
-            practitioners: identifying valuable insights without spending hours sifting through papers. Traditional
+            The flood of daily publications in Computer Vision and AI poses a challenge for anyone wanting to consume
+            research:
+            identifying valuable insights without spending hours sifting through papers. Traditional
             keyword or author searches often miss nuanced context or fail to adapt to evolving interests and can miss
-            relevant papers. I aimed to solve this by creating a system that not only automates the selection process
+            relevant papers.
+            <label for="sn-1" class="sidenote-toggle sidenote-number">Tools</label>
+            <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+            <span class="sidenote">
+                See full list in Appendix A-II
+            </span>span>
+            such as litmap, semantics
+            scolar or connected papers fall short if it's about the most recent research.
+            I aimed to solve this by creating a system that not only automates the selection process
             but also learns from user preferred topics. By combining AI-driven filtering with human feedback loops, this
             tool empowers a user to focus on innovation rather than information overload.
             <h2>Approach</h2>
@@ -57,6 +70,28 @@
             <h2>Future Work</h2>
             <hr>
             <h2>Appendix A</h2>
+            <h3>I - Research Paper Resources</h3>
+            <p>
+                Incomplete list of paper sources.
+            <ul>
+                <li>Arxiv</li>
+                <li>Google Scholar</li>
+                <li>BASE</li>
+                <li>Papers With Code</li>
+                <li>Hugging Face Spaces</li>
+                <li>Twitter/X</li>
+            </ul>
+            <h3>II - Paper Tools</h3>
+            <p>
+                Incomplete list of research tools.
+            <ul>
+                <li>Semantic Scholar</li>
+                <li>Influence Map</li>
+                <li>Connected Papers</li>
+                <li>Litmaps</li>
+            </ul>
+
+            </p>
         </article>
     </main>
 </body>
