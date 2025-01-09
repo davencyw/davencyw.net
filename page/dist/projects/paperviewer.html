@@ -7,14 +7,17 @@
     <title>Cutting Through the Noise: Automating AI Paper Review with Language Models</title>
     <link rel="stylesheet" href="https://latex.vercel.app/style.css">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- syntax highlighting -->
     <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-python.min.js"></script>
 
     <style>
         #dark-mode-toggle {
             position: fixed;
-            top: 30px;
-            left: 30px;
+            bottom: 30px;
+            right: 30px;
             padding: 10px 15px;
             background-color: #e0e0e0;
             color: #333;
@@ -64,6 +67,7 @@
         This article is a <i>Work in Progress</i>. Content may be incomplete or subject to change.
     </div>
 
+
     <button id="dark-mode-toggle">Dark Mode</button>
     <script>
         const toggleButton = document.querySelector("#dark-mode-toggle");
@@ -84,44 +88,50 @@
     </script>
 
     <header>
-        <h1>Cutting Through the Noise: Automated AI Paper Curation with Language Models</h1>
+        <h1>Cutting Through the Noise: Automated AI Paper Curation with Language Models and RLHF</h1>
     </header>
 
 
-    <p class="author">David Schmidig <br> January 2, 2025</p>
+    <p class="author">David Schmidig <br> January, 2025</p>
+
+    <figure>
+        <img src="/davencyw.net/projects/paperviewer/system_overview_diagram.png">
+        <figcaption>Overview of the whole system</figcaption>
+    </figure>
 
     <div class="abstract">
         <h2>Abstract</h2>
-        The rapid growth of research publications in Computer
-        <label for="sn-1" class="sidenote-toggle sidenote-number">Vision</label>
-        <input type="checkbox" id="sn-1" class="sidenote-toggle" />
-        <span class="sidenote">In 2024, there were more than 20'000 submitted papers to ECCV and CVPR only. Slightly
-            over
-            5'000 papers were accepted to both conferences combined, making it impossible for a single person to keep up
-            with all the research that is happening.</span>
-        and Artificial Intelligence makes staying
-        updated a daunting task. To address this, I developed a tool that automates the discovery and filtering of
-        research papers from sources like
-        <label for="sn-1" class="sidenote-toggle sidenote-number">Arxiv</label>
-        <input type="checkbox" id="sn-1" class="sidenote-toggle" />
-        <span class="sidenote">
-            See full list of possible sources in Apendix A-I.
-        </span>
-        . This tool leverages fine-tuned language models, human feedback, and
-        keyword relevance to streamline paper curation, ensuring that only the most relevant works reach the curious
-        user. This article outlines the technical process behind building the tool, including data ingestion, model
-        fine-tuning, and feedback integration, offering insights into how AI can simplify the research workflow.
+        <p>
+            The rapid growth of research publications in Computer
+            <label for="sn-1" class="sidenote-toggle sidenote-number">Vision</label>
+            <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+            <span class="sidenote">In 2024, there were more than 20'000 submitted papers to ECCV and CVPR only. Slightly
+                over
+                5'000 papers were accepted to both conferences combined, making it impossible for a single person to
+                keep up
+                with all the research that is happening.</span>
+            and Artificial Intelligence makes staying
+            updated a daunting task. To address this, I developed a tool that automates the discovery and filtering of
+            research papers from sources like Arxive or Google Scholar.
+            This tool leverages fine-tuned language models, reinforcement learning from human feedback and
+            a generative language model artifically inventing papers to streamline paper curation, ensuring that only
+            the most relevant works
+            reach the curious
+            user. This article outlines the technical process behind building the tool, including data ingestion, model
+            fine-tuning, and feedback integration, offering insights into how AI can simplify the research workflow.
+            <br><br>
+            The code for the generative and classification model training can be found on <a
+                href="https://github.com/davencyw/paperviewer-relevance-model">github.com/davencyw/paperviewer-relevance-model</a>.
+        </p><br>
     </div>
-    <figure>
-        <img src="/davencyw.net/projects/paperviewer/overview.png">
-        <figcaption>Overview of the whole system</figcaption>
-    </figure>
 
 
     <main>
 
-        <article class="indent-pars">
-            <h2>Motivation</h2>
+        <article>
+
+
+            <h2>1. Motivation</h2>
             <p>
                 The flood of daily publications in Computer Vision and AI poses a challenge for anyone wanting to
                 consume
@@ -130,56 +140,300 @@
                 keyword or author searches often miss nuanced context or fail to adapt to evolving interests and can
                 miss
                 relevant papers.
-                <label for="sn-1" class="sidenote-toggle sidenote-number">Tools</label>
-                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
-                <span class="sidenote">
-                    See full list in Appendix A-II
-                </span>
-                such as litmap, semantics
-                scolar or connected papers fall short if it's about the most recent research.
+                Tools such as Litmap, Connected Papers or Semantic Scholar fall short if it's about the most recent
+                research.
                 I aimed to solve this by creating a system that not only automates the selection process
                 but also learns from user preferred topics. By combining AI-driven filtering with human feedback loops,
                 this
                 tool empowers a user to focus on innovation rather than information overload.
-            <h2>Approach</h2>
-            <h3>Overview</h3>
-            The system consists of four main components (as seen in Fig. 1):
+            <h2>2. Approach</h2>
+            <h3>2.2 Overview</h3>
+            The system consists of five main components (as seen in Fig. 1):
             <ul>
                 <li>Paper Database</li>
                 <li>Paper Scraper</li>
-                <li>Learned Paper Curator</li>
+                <li>Relevance Model</li>
+                <li>Generative Paper Title Creator</li>
                 <li>User Facing Application</li>
             </ul>
-            In the following paragraph, each of those parts whill be
-            detailed followed by more detailed insights into
-            the sources, scoring and learning details.
+            The following paragraph will provide a detailed breakdown of each part, followed by in-depth insights into
+            the scoring, and learning processes.
             </p>
 
-            <p><br><b>Paper Database</b><br>
-                Such that the whole process is independent from any external sources, I decided to have my own paper
-                database which stores the needed paper meta-information as well as a link to the pdf. This allows for
-                easy ingestion of new papers as well as checking if the same paper has already been ingested, if it
-                appears in multiple sources. Lastly, it allows for custom meta data which is important for tagging and
-                training.<br>
-                <br><b>Paper Scraper</b><br>
-                The paper scraper is responsible for finding and ingesting all new research publications from different
-                sources online. The scraper has been designed to be as flexible as possible allowing all possible
-                sources to be ingested. For now, only sources with a clean Python-API have been incorporated, namely
-                Arxiv and Google Scholar.<br>
+            <p><br><b>🗂️ Paper Database</b><br>
+                To ensure the entire process remains independent of external sources, I decided to build my own paper
+                database. This database stores essential paper metadata along with links to the PDFs, facilitating the
+                easy ingestion of new papers and ensuring that duplicates are not ingested if they appear in multiple
+                sources. Additionally, the custom metadata it supports is crucial for tagging and training
+                purposes.<br><br>
+                The paper metadata stored in the database, which is also responsible for the database definition, looks
+                like this:
+            </p>
+            <pre>
+                <code class="language-python">
+    @dataclass
+    class Paper:
+        title: str
+        authors: List[str]
+        conferences: Optional[str]
+        comment: str
+        abstract: str
+        categories: List[str]
+        paper_id: str
+        pdf_url: str
+        pdf_file: Optional[str]
+        published: datetime
+        source: str
+        score: Optional[float]
+        selected_review: Optional[bool]
+        selected_review_date: Optional[datetime]
+            </code>
+            </pre>
 
-                <br><b>Learned Paper Curator</b><br><br>
-                <br><b>User Facing Application</b><br><br>
+            <p>
+                <br><b>📑 Paper Scraper</b><br>
+                The paper scraper is tasked with discovering and ingesting new research publications from various online
+                sources. It is designed to be highly flexible, enabling the integration of multiple sources. Currently,
+                only sources with a clean Python API, such as ArXiv and Google Scholar, have been incorporated.
+                Operating independently of the curator and user application, the scraper periodically updates the
+                database with new papers, ensuring the system stays current with the latest research.
+                <br>
+                <br><b>🔍 Relevance Model</b><br>
+                The centerpiece of the system is the relevance model, which serves as a learned curator. Its primary
+                role is to score papers based on their metadata, ensuring that only relevant papers reach the user while
+                filtering out noise. The process is straightforward: paper metadata is input, and a relevance score is
+                output.
+                <br><br>
+                Scoring is handled by a fine-tuned language model that classifies metadata, as detailed in the "Scoring"
+                section below. The scorer is implemented in Python, utilizing PyTorch for the model component. This
+                curator also interacts with the user through the application, incorporating user feedback on relevancy
+                into the model to continuously improve its performance.
+                <br>
+                <br><b>📝 Generative Paper Title Creator</b><br>
+                Due to the overwhelming noise compared to relevant papers, the dataset used to fine-tune the relevance
+                model is highly imbalanced, making it challenging to train a model that effectively generalizes to user
+                preferences. To tackle this, I use a generative approach to create artificial paper titles and
+                abstracts, which the user can rate for relevance. This feedback is then incorporated back into the
+                generative model using Reinforcement Learning with Human Feedback (RLHF) to improve the quality of
+                generated titles and abstracts. Additionally, true papers identified as relevant from the paper scraper
+                are augmented with these generated titles to further fine-tune the relevance model.
+                <br>
+                <br><b>🌐 User Facing Application</b><br>
+                Finally, the application includes a user-facing frontend that enables users to inspect and open papers,
+                as well as reclassify them based on their relevance. This feedback is then integrated back into the
+                learned paper curator. Built with Flask, the application features a straightforward web interface that
+                provides all necessary UI elements while seamlessly connecting to the curator and database through
+                Python.
+                <br>
             </p>
 
-            <h3>Sources</h3>
-            <h3>Scoring</h3>
-            <h4>Model Finetuning</h4>
-            <h4>Reinforcement Learning Updates</h4>
-            <h3>Interface</h3>
-            <h2>Results</h2>
-            <h2>Limitations</h2>
-            <h2>Future Work</h2>
+            <h3>2.2 Scoring</h3>
+            <p>
+                The core efficiency and value of the system hinges on accurately scoring the relevance of papers, which
+                ultimately depends on the user's specific interests. Fortunately, I had the advantage of using a simpler
+                system for over a year that relied solely on keyword and author-based
+                <label for="sn-1" class="sidenote-toggle sidenote-number">scoring</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    To implement this, I used a dictionary of word-value pairs. Whenever one of these words appeared in
+                    the title, its corresponding value was added to the overall score.
+                </span>
+                . While this approach provided a sufficient foundation to experiment with a more sophisticated, learned
+                approach.
+            </p>
+
+            <h4>2.2.1 Model Finetuning</h4>
+            <p>
+                I opted for a straightforward, language-based approach to paper classification, leveraging a combination
+                of the title, abstract, authors, and conference information. The chosen model,
+                <code>ModernBERT</code><sup><a href="#fn2" id="ref2">2</a></sup>,
+                is used for
+                binary text classification. The input to the tokenizer is a concatenation of the title, authors, and
+                abstract in the format: <code>input = f"{title} | {authors} | {abstract}"</code>. To accommodate the
+                model's maximum
+                input length of 1024 characters, the abstract has been preprocessed to remove stop words.
+            </p>
+            <p>
+                Given the dataset's significant imbalance—where the majority of papers are irrelevant—I employed
+                undersampling for the negative class and adjusted class weights during loss computation. With
+                approximately 800 positive and 40,000 negative samples, the precision/recall metrics and the ROC curve
+                are provided below. Notably, achieving a high recall for positive samples is prioritized, as missing
+                relevant papers is critical, whereas lower precision is more acceptable. For negative samples, the
+                inverse holds true.
+            </p>
+            <p>
+                <label for="sn-1" class="sidenote-toggle sidenote-number">Results</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    The support for the positive class is very limited, with only 200 samples, which makes the results
+                    highly sensitive to the sampled cases. However, to minimize the risk of overfitting to a specific
+                    test/training distribution, the fine-tuning process was repeated 10 times with different
+                    test/training splits.
+                </span class="sidenote">
+                on the evaluation dataset:
+            <pre>
+                            <code class="language-python">
+                      precision    recall  f1-score   support
+                   0       0.99      0.91      0.95     11795
+                   1       0.13      0.82      0.23       200
+            
+            accuracy                           0.91     11995
+           macro avg       0.56      0.86      0.59     11995
+        weighted avg       0.98      0.91      0.94     11995
+                            </code>
+                        </pre>
+
+            <figure>
+                <img src="/davencyw.net/projects/paperviewer/roc_finetuned_model.png">
+                <figcaption>Overview of the whole system</figcaption>
+            </figure>
+            </p>
+            <p>
+
+                These results demonstrate that, despite the imbalanced dataset, the fine-tuned model effectively filters
+                out approximately 90% of irrelevant papers while missing 20% of true positive relevant ones. By lowering
+                the classification threshold for relevance, the model can achieve a 90% recall of relevant papers but
+                reduces noise by only 80%. It's crucial to prioritize capturing relevant papers, as missed ones are
+                challenging to recover, whereas removing 80% of irrelevant content already provides significant value to
+                the user.
+            </p>
+            <p>
+                After fine-tuning the relevance model, I apply it to the entire dataset and review the misclassified
+                papers to identify any that may require correction. This process is repeated weekly, alongside
+                incorporating newly scraped papers from the sources, ensuring that no relevant
+                <label for="sn-1" class="sidenote-toggle sidenote-number">papers</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    It's important to avoid missing relevant papers, so the criteria for relevance are periodically
+                    relaxed to allow for manual review of a broader set of data. This approach prevents the model from
+                    collapsing into overly narrow predictions.
+                </span>
+                are overlooked.
+            </p>
+
+            <h4>2.2.2 Explore Relevancy Through Generative Paper Creation and RLHF
+
+            </h4>
+            <p>
+                Although the initially fine-tuned classification model offers value, it is hindered by the inherent
+                challenges of the task—namely, the dataset imbalance and the difficulty of predicting paper relevancy
+                based solely on the title and abstract. To better capture user preferences and explore a wider range of
+                paper (and abstract) possibilities, I developed a generative paper creation system that augments the
+                dataset, providing additional training material for the classifier
+                <label for="sn-1" class="sidenote-toggle sidenote-number">classifier</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    Heavily inspired by the AI-Scientist from sakana.ai<sup><a href="#fn4" id="ref4">4</a></sup>.
+                </span>
+                .
+                <br><br>
+                In the first phase, a generative model like GPT-2<sup><a href="#fn3" id="ref3">3</a></sup> is trained on
+                a limited set of relevant paper titles
+                to produce new, synthetic titles that resemble real-world
+                relevant papers. These generated papers are annotated by the user with relevancy
+                scores ranging from -1 to 10. Titles (and abstracts) that are deemed unrealistic are assigned a score of
+                -1, while those rated
+                as irrelevant receive a 0, and those considered highly relevant are given a 10. A reward model is then
+                trained on these annotations, guiding the generative model using RLHF (implemented with OpenRLHF<sup><a
+                        href="#fn1" id="ref1">1</a></sup>)to produce more meaningful labels. This
+                iterative process allows the user and the model to explore new topics and paper ideas that could be
+                relevant. To further diversify the generated titles, specific topics can be included in the prompt. The
+                process continues until 95% of the generated papers are labeled as relevant by the user, with the number
+                of generated papers reaching a size comparable to the ground truth positive labels (~1000).
+                <br><br>
+                This system also adapts to the
+                <label for="sn-1" class="sidenote-toggle sidenote-number">evolving</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    Over the past year, there's been a shift from GANs, model scaling, and federated learning towards
+                    multi-modality, foundation models, and model alignment, reflecting the growing focus on integrated
+                    systems and improving AI alignment with human values.
+                </span>
+                preferences of the user over time, as it is designed to run
+                periodically and is integrated with the weekly paper updates. By continuously incorporating user
+                feedback and relevancy annotations, the model refines
+                its understanding of the user's interests and adjusts its generative process accordingly. This dynamic
+                approach ensures that the dataset remains aligned with the user's shifting preferences, allowing the
+                system to generate more relevant and tailored paper ideas as it progresses.
+            </p>
+            <h3>2.3 Interface</h3>
+            <p>
+                The interface features a simple UI with two main sections: the overview and the review page. The
+                overview displays all reviewed and selected papers, organized by
+                <label for="sn-1" class="sidenote-toggle sidenote-number">week</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    I chose to use weekly cycles for aggregating the papers, as this provides a good balance between
+                    recency and manageable volume.
+                </span>
+                , along with relevant metadata.
+            </p>
+
+            <p>
+                <b>Overview Page</b><br>
+                The main feature of the overview page is the week selector, which displays all relevant papers for a
+                specific week. Clicking on a paper reveals the abstract, along with additional meta-information and a
+                direct link to the PDF stored on disk for reading and annotation.
+            <figure>
+                <img src="/davencyw.net/projects/paperviewer/overview_page.png">
+                <figcaption>Overview page</figcaption>
+            </figure>
+            </p>
+
+            <p>
+                <b>Review Page</b><br>
+                The review page features centrally located navigation and paper selectors (ignore or keep), which can
+                also be accessed via hotkeys. On the left side, you'll find metadata for the current paper, as well as a
+                list of all papers selected for the week. In the center, the paper itself is
+                <label for="sn-1" class="sidenote-toggle sidenote-number">displayed</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    To ensure fast loading when switching between papers, the application caches PDFs on disk.
+                </span>
+                in an iframe.
+                This layout enables efficient paper review using only the keyboard, while still allowing quick access to
+                the full paper when necessary.
+            <figure>
+                <img src="/davencyw.net/projects/paperviewer/review_page.png">
+                <figcaption>Review page</figcaption>
+            </figure><br>
+            </p>
+
+            <h2>3. Conclusion</h2>
+            <h2>3.1 Limitations and Future Work</h2>
+            annotation
+            scraping the web
+            automatic summary generation, put in context
+            write code and experiment, combine papers
+            generative modeling for titles and abstracts to train RLHF
+
+            <div class="footnotes">
+                <p id="fn1">
+                    1. <a href="https://github.com/OpenRLHF/OpenRLHF">https://github.com/OpenRLHF/OpenRLHF</a>.
+                    <a href="#ref1" title="OpenRLHF.">↩</a>
+                </p>
+                <p id="fn2">
+                    2. <a href="https://huggingface.co/answerdotai/ModernBERT-base">ModernBERT on Huggingface</a>.
+                    <a href="#ref2" title="ModernBERT.">↩</a>
+                </p>
+                <p id="fn3">
+                    3. <a href="https://huggingface.co/openai-community/gpt2">GPT-2 on Huggingface</a>.
+                    <a href="#ref2" title="GPT-2">↩</a>
+                </p>
+                <p id="fn4">
+                    4. <a href="https://sakana.ai/ai-scientist/">AI-Scientist</a>.
+                    <a href="#ref3" title="AI-Scientist">↩</a>
+                </p>
+
+
+
+            </div>
+        </article>
+        <!-- <article>
+            <br>
+            <br>
             <hr>
+            <br>
             <h2>Appendix A</h2>
             <h3>I - Research Paper Resources</h3>
             <p>
@@ -203,6 +457,6 @@
             </ul>
 
             </p>
-        </article>
+        </article> -->
     </main>
 </body>
