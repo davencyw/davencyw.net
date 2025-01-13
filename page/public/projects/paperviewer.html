@@ -94,11 +94,6 @@
 
     <p class="author">David Schmidig <br> January, 2025</p>
 
-    <figure>
-        <img src="/davencyw.net/projects/paperviewer/system_overview_diagram.png">
-        <figcaption>Overview of the whole system</figcaption>
-    </figure>
-
     <div class="abstract">
         <h2>Abstract</h2>
         <p>
@@ -129,7 +124,10 @@
     <main>
 
         <article>
-
+            <figure>
+                <img src="/davencyw.net/projects/paperviewer/system_overview_diagram.png">
+                <figcaption>Overview of the whole system</figcaption>
+            </figure>
 
             <h2>1. Motivation</h2>
             <p>
@@ -262,7 +260,7 @@
                 inverse holds true.
             </p>
             <p>
-                <label for="sn-1" class="sidenote-toggle sidenote-number">Results</label>
+                <label for="sn-1" class="sidenote-toggle sidenote-number">Averaged</label>
                 <input type="checkbox" id="sn-1" class="sidenote-toggle" />
                 <span class="sidenote">
                     The support for the positive class is very limited, with only 200 samples, which makes the results
@@ -270,7 +268,7 @@
                     test/training distribution, the fine-tuning process was repeated 10 times with different
                     test/training splits.
                 </span class="sidenote">
-                on the evaluation dataset:
+                results on the evaluation dataset:
             <pre>
                             <code class="language-python">
                       precision    recall  f1-score   support
@@ -356,6 +354,7 @@
                 approach ensures that the dataset remains aligned with the user's shifting preferences, allowing the
                 system to generate more relevant and tailored paper ideas as it progresses.
             </p>
+            TODO: Add results.
             <h3>2.3 Interface</h3>
             <p>
                 The interface features a simple UI with two main sections: the overview and the review page. The
@@ -400,12 +399,29 @@
             </p>
 
             <h2>3. Conclusion</h2>
+            <p>
+                In conclusion, this paper curation tool addresses the challenge of managing the overwhelming volume of
+                research in Computer Vision and AI. By automating the process of discovering and filtering papers, it
+                ensures that users only see the most relevant work. Combining fine-tuned language models with
+                reinforcement
+                learning from human feedback and generative techniques, the system adapts to user preferences and
+                evolves
+                over time. This approach not only saves time but also makes it easier to stay up-to-date with
+                cutting-edge
+                research, providing a more efficient way to engage with the growing body of knowledge in the field.
+                The approach is easily adaptable and extensible to other sorts of inputs, ideas, rewards or sources.
+            </p>
+
             <h2>3.1 Limitations and Future Work</h2>
+            TODO
+            <!-- <p></p>
+            <p></p>
             annotation
+            more metadata
             scraping the web
             automatic summary generation, put in context
             write code and experiment, combine papers
-            generative modeling for titles and abstracts to train RLHF
+            generative modeling for titles and abstracts to train RLHF -->
 
             <div class="footnotes">
                 <p id="fn1">
