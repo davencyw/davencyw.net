@@ -115,7 +115,7 @@
             user. This article outlines the technical process behind building the tool, including data ingestion, model
             fine-tuning, and feedback integration, offering insights into how AI can simplify the research workflow.
             <br><br>
-            The code for the generative and classification model training can be found on <a
+            The code for the generative, reward and classification model training can be found on <a
                 href="https://github.com/davencyw/paperviewer-relevance-model">github.com/davencyw/paperviewer-relevance-model</a>.
         </p><br>
     </div>
@@ -326,7 +326,7 @@
                 .
                 <br><br>
                 In the first phase, a generative model like GPT-2<sup><a href="#fn3" id="ref3">3</a></sup> is trained on
-                a limited set of relevant paper titles
+                the full paper database and then on a limited set of relevant paper titles
                 to produce new, synthetic titles that resemble real-world
                 relevant papers. These generated papers are annotated by the user with relevancy
                 scores ranging from -1 to 10. Titles (and abstracts) that are deemed unrealistic are assigned a score of
