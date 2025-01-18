@@ -244,7 +244,7 @@
             <p>
                 I opted for a straightforward, language-based approach to paper classification, leveraging a combination
                 of the title, abstract, authors, and conference information. The chosen model,
-                <code>ModernBERT</code><sup><a href="#fn2" id="ref2">2</a></sup>,
+                <code>ModernBERT</code><sup><a href="#fn1" id="ref1">1</a></sup>,
                 is used for
                 binary text classification. The input to the tokenizer is a concatenation of the title, authors, and
                 abstract in the format: <code>input = f"{title} | {authors} | {abstract}"</code>. To accommodate the
@@ -321,29 +321,52 @@
                 <label for="sn-1" class="sidenote-toggle sidenote-number">classifier</label>
                 <input type="checkbox" id="sn-1" class="sidenote-toggle" />
                 <span class="sidenote">
-                    Heavily inspired by the AI-Scientist from sakana.ai<sup><a href="#fn4" id="ref4">4</a></sup>.
+                    Heavily inspired by the AI-Scientist from sakana.ai<sup><a href="#fn3" id="ref3">3</a></sup>.
                 </span>
                 .
-                <br><br>
-                In the first phase, a generative model like GPT-2<sup><a href="#fn3" id="ref3">3</a></sup> is trained on
+            </p>
+            <p>
+                In the first phase, a generative model (GPT-2<sup><a href="#fn2" id="ref2">2</a></sup> in that case) is
+                trained on
                 the full paper database and then on a limited set of relevant paper titles
                 to produce new, synthetic titles that resemble real-world
-                relevant papers. These generated papers are annotated by the user with relevancy
+                relevant papers. These generated papers are
+                <label for="sn-1" class="sidenote-toggle sidenote-number">annotated</label>
+                <input type="checkbox" id="sn-1" class="sidenote-toggle" />
+                <span class="sidenote">
+                    A simple TUI has been built with <code>curses</code> (see code) to do this to have a fast iteration
+                    cycle.
+                </span>
+
+                by the user with relevancy
                 scores ranging from -1 to 10. Titles (and abstracts) that are deemed unrealistic are assigned a score of
                 -1, while those rated
                 as irrelevant receive a 0, and those considered highly relevant are given a 10. A reward model is then
-                trained on these annotations, guiding the generative model using RLHF (implemented with OpenRLHF<sup><a
-                        href="#fn1" id="ref1">1</a></sup>)to produce more meaningful labels. This
+                trained on these annotations, guiding the generative model using RLHF to produce more meaningful labels.
+                This
                 iterative process allows the user and the model to explore new topics and paper ideas that could be
                 relevant. To further diversify the generated titles, specific topics can be included in the prompt. The
                 process continues until 95% of the generated papers are labeled as relevant by the user, with the number
                 of generated papers reaching a size comparable to the ground truth positive labels (~1000).
-                <br><br>
-                This system also adapts to the
+            </p>
+            <p>
+                Through the initial generator finetuning with the whole (true) dataset, the models perplexity is reduced
+                from 28 down to 10 which shows good alignment with the ground truth. Examples of the generated titles
+                are shown below. Another evaluation of the system is looking at the averaga reward before and after the
+                RLHF training. The finetuned generator is able to produce output that increases the average reward from
+                0.5 to 6.5 using the initially trained reward model.
+            <figure>
+                <img src="/davencyw.net/projects/paperviewer/perplexity_reward_plot.png">
+                <figcaption>Review page</figcaption>
+            </figure>
+            </p>
+            <p>
+                This system is capable of adapting to the
                 <label for="sn-1" class="sidenote-toggle sidenote-number">evolving</label>
                 <input type="checkbox" id="sn-1" class="sidenote-toggle" />
                 <span class="sidenote">
-                    Over the past year, there's been a shift from GANs, model scaling, and federated learning towards
+                    For example, over the past year, there's been a shift from GANs, model scaling, and federated
+                    learning towards
                     multi-modality, foundation models, and model alignment, reflecting the growing focus on integrated
                     systems and improving AI alignment with human values.
                 </span>
@@ -353,8 +376,15 @@
                 its understanding of the user's interests and adjusts its generative process accordingly. This dynamic
                 approach ensures that the dataset remains aligned with the user's shifting preferences, allowing the
                 system to generate more relevant and tailored paper ideas as it progresses.
+
             </p>
-            TODO: Add results.
+            Sample of generated titles (not all of them are good):
+            <blockquote>
+                <p>PoseRe-IoU: A Pose-Based Method for Real-Time, Robust, and Efficient Human Pose Estimation</p>
+                <p>PoseRe-IoU: A Pose-Based Method for Real-Time, Robust, and Efficient Human Pose Estimation</p>
+                <p>PoseRe-IoU: A Pose-Based Method for Real-Time, Robust, and Efficient Human Pose Estimation</p>
+                <p>PoseRe-IoU: A Pose-Based Method for Real-Time, Robust, and Efficient Human Pose Estimation</p>
+            </blockquote>
             <h3>2.3 Interface</h3>
             <p>
                 The interface features a simple UI with two main sections: the overview and the review page. The
@@ -400,8 +430,9 @@
 
             <h2>3. Conclusion</h2>
             <p>
-                In conclusion, this paper curation tool addresses the challenge of managing the overwhelming volume of
-                research in Computer Vision and AI. By automating the process of discovering and filtering papers, it
+                This paper curation tool addresses the challenge of managing the overwhelming volume of
+                research in (for example) Computer Vision and AI. By automating the process of discovering and filtering
+                papers, it
                 ensures that users only see the most relevant work. Combining fine-tuned language models with
                 reinforcement
                 learning from human feedback and generative techniques, the system adapts to user preferences and
@@ -411,33 +442,52 @@
                 research, providing a more efficient way to engage with the growing body of knowledge in the field.
                 The approach is easily adaptable and extensible to other sorts of inputs, ideas, rewards or sources.
             </p>
+            <p>
+                Building a functional product with language models and reinforcement learning was a significant learning
+                experience for me. This system has become an indispensable daily tool, greatly enhancing my efficiency
+                in staying updated with the latest research.
+            </p>
 
             <h2>3.1 Limitations and Future Work</h2>
-            TODO
+            <p> There are several limitations to the current system, and I’ll begin with the most significant ones.
+                First, the model's performance is highly dependent on the quality of annotations and the biases
+                introduced by the generator, reward model, and relevance model. Ensuring the quality of annotations and
+                comparing them against the full dataset of existing papers is critical, but this process can be
+                time-intensive. Second, the system currently utilizes only a subset of available metadata, focusing
+                primarily on titles and abstracts. It cannot realistically generate authors relevant outside of those
+                already included. Additional metadata, such as keywords, conferences, or associated labs/companies,
+                could significantly enhance the system's capabilities. While the generative model effectively addresses
+                the underrepresented positive class and explores potential paper ideas, a GPT-2-like model is limited in
+                its ability to generate truly novel ideas and meaningful paper titles. A larger or more specialized
+                model might be more suitable for these tasks.
+            </p>
+            <p> Several possible extensions could enhance the current system. One option is to implement automatic paper
+                summarization, making papers easier to digest and situating them within a broader context. Expanding
+                paper and metadata scraping efforts would also create a more comprehensive dataset. Finally, developing
+                a system capable of generating novel ideas by combining insights from different papers—much like
+                researchers draw inspiration from others’ work—could be a valuable addition, enabling deeper exploration
+                of the space of possible ideas.
+            </p>
+
             <!-- <p></p>
             <p></p>
             annotation
             more metadata
             scraping the web
             automatic summary generation, put in context
-            write code and experiment, combine papers
-            generative modeling for titles and abstracts to train RLHF -->
+            write code and experiment, combine papers -->
 
             <div class="footnotes">
                 <p id="fn1">
-                    1. <a href="https://github.com/OpenRLHF/OpenRLHF">https://github.com/OpenRLHF/OpenRLHF</a>.
-                    <a href="#ref1" title="OpenRLHF.">↩</a>
+                    1. <a href="https://huggingface.co/answerdotai/ModernBERT-base">ModernBERT on Huggingface</a>.
+                    <a href="#ref1" title="ModernBERT.">↩</a>
                 </p>
                 <p id="fn2">
-                    2. <a href="https://huggingface.co/answerdotai/ModernBERT-base">ModernBERT on Huggingface</a>.
-                    <a href="#ref2" title="ModernBERT.">↩</a>
-                </p>
-                <p id="fn3">
-                    3. <a href="https://huggingface.co/openai-community/gpt2">GPT-2 on Huggingface</a>.
+                    2. <a href="https://huggingface.co/openai-community/gpt2">GPT-2 on Huggingface</a>.
                     <a href="#ref2" title="GPT-2">↩</a>
                 </p>
-                <p id="fn4">
-                    4. <a href="https://sakana.ai/ai-scientist/">AI-Scientist</a>.
+                <p id="fn3">
+                    3. <a href="https://sakana.ai/ai-scientist/">AI-Scientist</a>.
                     <a href="#ref3" title="AI-Scientist">↩</a>
                 </p>
 
@@ -446,33 +496,7 @@
             </div>
         </article>
         <!-- <article>
-            <br>
-            <br>
-            <hr>
-            <br>
             <h2>Appendix A</h2>
-            <h3>I - Research Paper Resources</h3>
-            <p>
-                Incomplete list of paper sources.
-            <ul>
-                <li>Arxiv</li>
-                <li>Google Scholar</li>
-                <li>BASE</li>
-                <li>Papers With Code</li>
-                <li>Hugging Face Spaces</li>
-                <li>Twitter/X</li>
-            </ul>
-            <h3>II - Paper Tools</h3>
-            <p>
-                Incomplete list of research tools.
-            <ul>
-                <li>Semantic Scholar</li>
-                <li>Influence Map</li>
-                <li>Connected Papers</li>
-                <li>Litmaps</li>
-            </ul>
-
-            </p>
         </article> -->
     </main>
 </body>
