@@ -107,7 +107,7 @@
                 with all the research that is happening.</span>
             and Artificial Intelligence makes staying
             updated a daunting task. To address this, I developed a tool that automates the discovery and filtering of
-            research papers from sources like Arxive or Google Scholar.
+            research papers from sources like arXiv or Google Scholar.
             This tool leverages fine-tuned language models, reinforcement learning from human feedback and
             a generative language model artifically inventing papers to streamline paper curation, ensuring that only
             the most relevant works
@@ -192,7 +192,7 @@
                 <br><b>📑 Paper Scraper</b><br>
                 The paper scraper is tasked with discovering and ingesting new research publications from various online
                 sources. It is designed to be highly flexible, enabling the integration of multiple sources. Currently,
-                only sources with a clean Python API, such as ArXiv and Google Scholar, have been incorporated.
+                only sources with a clean Python API, such as arXiv and Google Scholar, have been incorporated.
                 Operating independently of the curator and user application, the scraper periodically updates the
                 database with new papers, ensuring the system stays current with the latest research.
                 <br>
@@ -350,15 +350,31 @@
                 of generated papers reaching a size comparable to the ground truth positive labels (~1000).
             </p>
             <p>
-                Through the initial generator finetuning with the whole (true) dataset, the models perplexity is reduced
-                from 28 down to 10 which shows good alignment with the ground truth. Examples of the generated titles
-                are shown below. Another evaluation of the system is looking at the averaga reward before and after the
-                RLHF training. The finetuned generator is able to produce output that increases the average reward from
-                0.5 to 6.5 using the initially trained reward model.
             <figure>
                 <img src="/davencyw.net/projects/paperviewer/perplexity_reward_plot.png">
                 <figcaption>Review page</figcaption>
             </figure>
+            </p>
+            <p>
+                Through the initial generator finetuning with the whole (true) dataset, the models perplexity is reduced
+                from 28 down to 10 which shows good alignment with the ground truth. Examples of the generated titles
+                are shown further below. Another evaluation of the system is looking at the averaga reward before and
+                after the
+                RLHF training. The finetuned generator is able to produce output that increases the average reward from
+                0.5 to 7.5 using the initially trained reward model.
+            </p>
+
+            <p>
+                Small sample of generated titles after initial finetuning:
+            <pre>
+DiffuK-Vid: Diffusion Video Model for High-fidelity Talking Face Video Generation
+Vision-based Occupancy Prediction Based on Geometric Priors
+Segment Any Mask
+Adaptive Data Scaling for Efficient Object Detection
+GaussianFormer: 3D Gaussian Splatting Transformer with Local-Global Fusion
+GAMMA-Net: Gated Multimodal Adapter for Efficient Multimodal Action Recognition
+DiffusionFormer: Boosting Vision Transformers with Diffusion Transformers 
+                </pre>
             </p>
             <p>
                 This system is capable of adapting to the
@@ -376,22 +392,6 @@
                 its understanding of the user's interests and adjusts its generative process accordingly. This dynamic
                 approach ensures that the dataset remains aligned with the user's shifting preferences, allowing the
                 system to generate more relevant and tailored paper ideas as it progresses.
-
-            </p>
-            <p>
-                Small sample of generated titles after initial finetuning:
-            <pre>
-DiffuK-Vid: Diffusion Video Model for High-fidelity Talking Face Video Generation
-Vision-based Occupancy Prediction Based on Geometric Priors
-Segment Any Mask
-Adaptive Data Scaling for Efficient Object Detection
-GaussianFormer: 3D Gaussian Splatting Transformer with Local-Global Fusion
-GAMMA-Net: Gated Multimodal Adapter for Efficient Multimodal Action Recognition
-DiffusionFormer: Boosting Vision Transformers with Diffusion Transformers 
-                </pre>
-            <blockquote>
-
-            </blockquote>
             </p>
             <h3>2.3 Interface</h3>
             <p>
@@ -458,8 +458,9 @@ DiffusionFormer: Boosting Vision Transformers with Diffusion Transformers
 
             <h2>3.1 Limitations and Future Work</h2>
             <p> There are several limitations to the current system, and I’ll begin with the most significant ones.
-                First, the model's performance is highly dependent on the quality of annotations and the biases
-                introduced by the generator, reward model, and relevance model. Ensuring the quality of annotations and
+                The model's performance heavily relies on the quality of annotations as
+                well as the biases introduced by the generator, reward model, and relevance model. Acquiring
+                annotations, ensuring their quality and
                 comparing them against the full dataset of existing papers is critical, but this process can be
                 time-intensive. Second, the system currently utilizes only a subset of available metadata, focusing
                 primarily on titles and abstracts. It cannot realistically generate authors relevant outside of those
