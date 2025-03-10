@@ -220,10 +220,9 @@ footer-left {
     width: 33%;
     float: left;
     margin-right: 4%;
-    overflow-y: scroll;
+    overflow-y: auto;
     max-height: 60%;
     scrollbar-color: white black;
-    scrollbar-width: always;
 }
 
 .close-btn {
