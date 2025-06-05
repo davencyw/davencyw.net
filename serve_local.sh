@@ -1,0 +1,1 @@
+cd page && npm run serve

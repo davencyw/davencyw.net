@@ -241,5 +241,43 @@ footer-left {
     /* Optional: Change color on hover */
 }
 
+/* Project title and subtitle styling */
+.project-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.project-subtitle {
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgb(180, 180, 180);
+    line-height: 1.3;
+    margin-bottom: 8px;
+}
+
+/* Ensure project links maintain proper spacing */
+#projects ul li {
+    margin-bottom: 12px;
+}
+
+#projects ul li a {
+    display: block;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+#projects ul li a:hover .project-title {
+    color: rgb(255, 255, 255);
+}
+
+#projects ul li a:hover .project-subtitle {
+    color: rgb(220, 220, 220);
+}
+
 
 
